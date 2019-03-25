@@ -28,7 +28,7 @@ function sendToPipingServer({
     port,
     path,
     contentType
-}: SendingSetting) {
+}: SendingSetting): http.ClientRequest {
     const client = scheme === "https" ? https : http;
     const options = {
         hostname: hostname,
@@ -40,8 +40,8 @@ function sendToPipingServer({
         }
     };
 
-    const req = client.request(options, (res: any) => { // TODO: Not use any
-        res.on('data', (chunk: any) => { // TODO: Not use any
+    const req = client.request(options, (res: http.IncomingMessage) => {
+        res.on('data', (chunk: any) => {
             // Print message from Piping Server
             console.log(chunk.toString("UTF-8"));
         });
