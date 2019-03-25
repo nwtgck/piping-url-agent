@@ -83,14 +83,16 @@ const server = http.createServer((req: http.IncomingMessage, res: http.ServerRes
 
   const client = parsedUrl.protocol === "https:" ? https : http;
 
+  const info = {
+    "target_url": target_url,
+    "piping_url": piping_url
+  };
+
   const getReq = client.get(targetUrl, (getRes) => {
     res.end(JSON.stringify({
       error: null,
-      info: {
-        targetUrl: target_url,
-        pipingUrl: piping_url
-      }
-    }));
+      info: info
+    }, null, "  "));
     console.log(getRes.headers);
     getRes.pipe(sendToPipingServer(
       pipingUrl,
@@ -102,11 +104,8 @@ const server = http.createServer((req: http.IncomingMessage, res: http.ServerRes
   getReq.on("error", (err) => {
     res.end(JSON.stringify({
       error: err,
-      info: {
-        targetUrl: target_url,
-        pipingUrl: piping_url
-      }
-    }));
+      info: info
+    }, null, "  "));
   })
 });
 
