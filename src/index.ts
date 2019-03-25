@@ -14,26 +14,14 @@ const httpPort = 3000;
 // (from: https://stackoverflow.com/a/21961005/2885946)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
-type SendingSetting = {
-  scheme: "http" | "https",
-  hostname: string,
-  port: number,
-  path: string, // (NOTE: This can contain "?key1=value")
-  contentType: string
-}
+function sendToPipingServer(pipingUrl: string, contentType: string): http.ClientRequest {
+    const parsedUrl = url.parse(pipingUrl, true);
+    const client = parsedUrl.protocol === "https:" ? https : http;
 
-function sendToPipingServer({
-    scheme,
-    hostname,
-    port,
-    path,
-    contentType
-}: SendingSetting): http.ClientRequest {
-    const client = scheme === "https" ? https : http;
     const options = {
-        hostname: hostname,
-        port: port,
-        path: path,
+        hostname: parsedUrl.hostname,
+        port: parsedUrl.port,
+        path: parsedUrl.path,
         method: 'POST',
         headers: {
             'Content-Type': contentType || 'application/x-www-form-urlencoded'
@@ -62,18 +50,8 @@ const server = http.createServer((req: http.IncomingMessage, res: http.ServerRes
     const query = parsedUrl.query;
     let {
         target_url,
-        piping_scheme,
-        piping_hostname,
-        piping_port,
-        piping_path
+        piping_url
     } = query;
-
-
-    // TODO: Not use casting
-    const pipingScheme: "http" | "https" = (piping_scheme as ("http" | "https")) || "https";
-    // TODO: Not use casting
-    const pipingPort = parseInt(piping_port as string) || 443;
-
 
     if (target_url === undefined) {
        res.end(JSON.stringify({
@@ -81,15 +59,9 @@ const server = http.createServer((req: http.IncomingMessage, res: http.ServerRes
        }));
       return;
     }
-    if (piping_hostname === undefined) {
-        res.end(JSON.stringify({
-            error: "piping_hostname required"
-        }));
-        return;
-    }
-    if (piping_path === undefined) {
+    if (piping_url === undefined) {
        res.end(JSON.stringify({
-         error: "piping_path required"
+         error: "piping_url required"
        }));
       return;
     }
@@ -99,40 +71,41 @@ const server = http.createServer((req: http.IncomingMessage, res: http.ServerRes
         }));
         return;
     }
+    if (Array.isArray(piping_url)){
+        res.end(JSON.stringify({
+            error: `piping_url should be string, but found array`
+        }));
+        return;
+    }
 
-    const pipingSetting = {
-        scheme: pipingScheme,
-        // TODO: Not use casting
-        hostname: piping_hostname as string,
-        port: pipingPort,
-        // TODO: Not use casting
-        path: piping_path as string,
-    };
+    const targetUrl: string = target_url;
+    const pipingUrl: string = piping_url;
+
     const client = parsedUrl.protocol === "https:" ? https : http;
 
-    const info = {
-        targetUrl: target_url,
-        pipingSetting: pipingSetting
-    };
-
-
-    const getReq = client.get(target_url, (getRes) => {
+    const getReq = client.get(targetUrl, (getRes) => {
         res.end(JSON.stringify({
             error: null,
-            info: info
+            info: {
+                targetUrl: target_url,
+                pipingUrl: piping_url
+            }
         }));
         console.log(getRes.headers);
-        getRes.pipe(sendToPipingServer({
-          ...pipingSetting,
+        getRes.pipe(sendToPipingServer(
+            pipingUrl,
             // TODO: Not use casting
-            contentType: getRes.headers["content-type"] as string
-        }));
+            getRes.headers["content-type"] as string
+        ));
     });
 
     getReq.on("error", (err) => {
         res.end(JSON.stringify({
             error: err,
-            info: info
+            info: {
+                targetUrl: target_url,
+                pipingUrl: piping_url
+            }
         }));
     })
 });
