@@ -1,0 +1,12 @@
+# piping-url-agent
+URL-getting Agent for Piping Server
+
+## Usage
+
+```bash
+cd <this repo>
+npm i
+npm start
+```
+
+Then, you can access to <http://localhost:3000/?target_url=http://example.com&piping_hostname=piping.ml&piping_path=/mypath1> and <https://piping.ml/mypath1>.
