@@ -1,10 +1,4 @@
 import {handler} from "./piping-url-agent";
-
-export function hoge(str: string): number {
-  return str.length;
-}
-
-
 import * as http from "http";
 
 // TODO: hard code
