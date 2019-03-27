@@ -1,4 +1,6 @@
 # piping-url-agent
+[![CircleCI](https://circleci.com/gh/nwtgck/piping-url-agent.svg?style=shield)](https://circleci.com/gh/nwtgck/piping-url-agent)
+
 URL-getting Agent for Piping Server
 
 ## Usage
