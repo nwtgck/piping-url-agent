@@ -1,8 +1,9 @@
 import * as http from "http";
 import * as url from "url";
 import * as https from "https";
+import {IncomingMessage, ServerResponse} from "http";
 
-function sendToPipingServer(pipingUrl: string, contentType: string): http.ClientRequest {
+function sendToPipingServer(pipingUrl: string, contentType: string, enableLog: boolean): http.ClientRequest {
   const parsedUrl = url.parse(pipingUrl, true);
   const client = parsedUrl.protocol === "https:" ? https : http;
 
@@ -17,13 +18,16 @@ function sendToPipingServer(pipingUrl: string, contentType: string): http.Client
   };
 
   const req = client.request(options, (res: http.IncomingMessage) => {
-    res.on('data', (chunk: any) => {
-      // Print message from Piping Server
-      console.log(chunk.toString("UTF-8"));
-    });
-    res.on('end', () => {
-      console.log('No more data in response.');
-    });
+    // If log is enable
+    if (enableLog) {
+      res.on('data', (chunk: any) => {
+        // Print message from Piping Server
+        console.log(chunk.toString("UTF-8"));
+      });
+      res.on('end', () => {
+        console.log('No more data in response.');
+      });
+    }
   });
 
   req.on('error', (e: Error) => {
@@ -32,67 +36,71 @@ function sendToPipingServer(pipingUrl: string, contentType: string): http.Client
   return req;
 }
 
-export const handler = (req: http.IncomingMessage, res: http.ServerResponse) => {
-  // TODO: Not use `as string`
-  const parsedUrl = url.parse(req.url as string, true);
-  const query = parsedUrl.query;
-  const {
-    target_url,
-    piping_url
-  } = query;
+// TODO: Use logger instead of `enableLog`
+export function generateHandler(enableLog: boolean): (req: IncomingMessage, res: ServerResponse) => void {
+  return (req: http.IncomingMessage, res: http.ServerResponse) => {
+    // TODO: Not use `as string`
+    const parsedUrl = url.parse(req.url as string, true);
+    const query = parsedUrl.query;
+    const {
+      target_url,
+      piping_url
+    } = query;
 
-  if (target_url === undefined) {
-    res.end(JSON.stringify({
-      error: "target_url required"
-    }));
-    return;
-  }
-  if (piping_url === undefined) {
-    res.end(JSON.stringify({
-      error: "piping_url required"
-    }));
-    return;
-  }
-  if (Array.isArray(target_url)) {
-    res.end(JSON.stringify({
-      error: `target_url should be string, but found array`
-    }));
-    return;
-  }
-  if (Array.isArray(piping_url)) {
-    res.end(JSON.stringify({
-      error: `piping_url should be string, but found array`
-    }));
-    return;
-  }
+    if (target_url === undefined) {
+      res.end(JSON.stringify({
+        error: "target_url required"
+      }));
+      return;
+    }
+    if (piping_url === undefined) {
+      res.end(JSON.stringify({
+        error: "piping_url required"
+      }));
+      return;
+    }
+    if (Array.isArray(target_url)) {
+      res.end(JSON.stringify({
+        error: `target_url should be string, but found array`
+      }));
+      return;
+    }
+    if (Array.isArray(piping_url)) {
+      res.end(JSON.stringify({
+        error: `piping_url should be string, but found array`
+      }));
+      return;
+    }
 
-  const targetUrl: string = target_url;
-  const pipingUrl: string = piping_url;
+    const targetUrl: string = target_url;
+    const pipingUrl: string = piping_url;
 
-  const client = parsedUrl.protocol === "https:" ? https : http;
+    const client = parsedUrl.protocol === "https:" ? https : http;
 
-  const info = {
-    "target_url": target_url,
-    "piping_url": piping_url
+    const info = {
+      "target_url": target_url,
+      "piping_url": piping_url
+    };
+
+    const getReq = client.get(targetUrl, (getRes) => {
+      res.end(JSON.stringify({
+        error: null,
+        info: info
+      }, null, "  "));
+
+      getRes.pipe(sendToPipingServer(
+        pipingUrl,
+        // TODO: Not use casting
+        getRes.headers["content-type"] as string,
+        enableLog
+      ));
+    });
+
+    getReq.on("error", (err) => {
+      res.end(JSON.stringify({
+        error: err,
+        info: info
+      }, null, "  "));
+    });
   };
-
-  const getReq = client.get(targetUrl, (getRes) => {
-    res.end(JSON.stringify({
-      error: null,
-      info: info
-    }, null, "  "));
-    console.log(getRes.headers);
-    getRes.pipe(sendToPipingServer(
-      pipingUrl,
-      // TODO: Not use casting
-      getRes.headers["content-type"] as string
-    ));
-  });
-
-  getReq.on("error", (err) => {
-    res.end(JSON.stringify({
-      error: err,
-      info: info
-    }, null, "  "));
-  })
-};
+}

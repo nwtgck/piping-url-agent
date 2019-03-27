@@ -6,7 +6,7 @@ import * as express from 'express';
 import * as pipingServer from 'piping-server';
 import * as pipingUrlAgent from '../src/piping-url-agent';
 
-describe('handler', () => {
+describe('generateHandler', () => {
   it("should request to a target server", async () => {
     const pipingPort: number = await getPort();
     const agentPort: number = await getPort();
@@ -26,7 +26,7 @@ describe('handler', () => {
     );
 
     // Create an agent server
-    const agentServer: http.Server = http.createServer(pipingUrlAgent.handler);
+    const agentServer: http.Server = http.createServer(pipingUrlAgent.generateHandler(false));
     // Wait listening
     await new Promise(resolve =>
       agentServer.listen(agentPort, resolve)
