@@ -9,7 +9,7 @@
   "types": "dist/src/piping-url-agent.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "test": "mocha --require ts-node/register test/**/*.ts",
     "start": "npm run build && node dist/src/index.js"
   },
