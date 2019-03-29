@@ -17,6 +17,7 @@ OR
 ```bash
 # Way 2
 npm i -g git+https://github.com/nwtgck/piping-url-agent#master
+piping-url-agent
 ```
 
 
