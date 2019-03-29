@@ -6,6 +6,18 @@ ANCHORS:
       # Check whether "run build" is successful
       - run: npm run build
       - run: npm test
+      - run:
+          name: Executable test
+          command: |
+            set -x
+            project_path=$PWD
+            # Make test environment
+            mkdir /tmp/test_env
+            cd /tmp/test_env
+            # Install this project
+            npm i -S $project_path
+            # Execute help
+            ./node_modules/.bin/piping-url-agent --help
 
 version: 2
 jobs:
