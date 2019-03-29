@@ -14,4 +14,4 @@ RUN cd /app && \
     npm prune --production
 
 # Run a server
-ENTRYPOINT [ "tini", "--", "node", "/app/src/index.js" ]
+ENTRYPOINT [ "tini", "--", "node", "/app/dist/src/index.js" ]

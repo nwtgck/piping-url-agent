@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "URL-getting Agent for Piping Server",
   "bin": {
-    "piping-url-agent": "src/index.js"
+    "piping-url-agent": "dist/src/index.js"
   },
   "main": "dist/src/piping-url-agent.js",
   "types": "dist/src/piping-url-agent.d.ts",
@@ -11,7 +11,7 @@
     "build": "tsc",
     "postinstall": "npm i --only=dev --ignore-scripts && npm run build",
     "test": "mocha --require ts-node/register test/**/*.ts",
-    "start": "npm run build && node src/index.js"
+    "start": "npm run build && node dist/src/index.js"
   },
   "keywords": [
     "http",
