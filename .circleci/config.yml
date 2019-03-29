@@ -1,0 +1,66 @@
+ANCHORS:
+  node_steps: &node_steps
+    steps:
+      - checkout
+      - run: npm install
+      # Check whether "run build" is successful
+      - run: npm run build
+      - run: npm test
+      - run:
+          name: Executable test
+          command: |
+            set -x
+            project_path=$PWD
+            # Make test environment
+            mkdir /tmp/test_env
+            cd /tmp/test_env
+            # Install this project
+            npm i -S $project_path
+            # Execute help
+            ./node_modules/.bin/piping-url-agent --help
+
+version: 2
+jobs:
+  node_10:
+    docker:
+      - image: circleci/node:10
+    <<: *node_steps
+
+  node_8:
+    docker:
+      - image: circleci/node:8
+    <<: *node_steps
+
+  docker_test:
+    machine: true
+    steps:
+      - checkout
+      # Check whether "docker build" is successful or not
+      - run: docker build -t piping-url-agent .
+      - run:
+          name: Working test with Docker image
+          command: |
+            set -x
+            # Run a Piping Server
+            docker run -d -p 8080:80 nwtgck/piping-server:v0.9.2 --http-port=80
+            # Run a nginx
+            docker run -d -p 8081:80 nginx
+            # Run an agent server
+            docker run -d -p 3001:80 piping-url-agent --http-port=80
+            # Wait for servers running
+            sleep 3
+            # Get host IP
+            host_ip=$(hostname -i)
+            # Send request to the agent server
+            curl "http://localhost:3001/?target_url=http://$host_ip:8081&piping_url=http://$host_ip:8080/mypath1" &
+            sleep 1
+            # Get nginx index page from the Piping Server
+            curl localhost:8080/mypath1
+
+workflows:
+  version: 2
+  node_tests:
+    jobs:
+      - node_10
+      - node_8
+      - docker_test
