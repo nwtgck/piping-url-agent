@@ -1,6 +1,6 @@
 {
   "name": "piping-url-agent",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "URL-getting Agent for Piping Server",
   "bin": {
     "piping-url-agent": "dist/src/index.js"
@@ -9,7 +9,7 @@
   "types": "dist/src/piping-url-agent.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "test": "mocha --require ts-node/register test/**/*.ts",
     "start": "npm run build && node dist/src/index.js"
   },
