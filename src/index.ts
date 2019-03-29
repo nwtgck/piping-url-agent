@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+// (from: https://qiita.com/takayukioda/items/a149bc2907ef77121229)
+
 import {generateHandler} from "./piping-url-agent";
 import * as http from "http";
 import * as yargs from "yargs";
