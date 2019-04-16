@@ -38,7 +38,7 @@
     "power-assert": "^1.4.4",
     "then-request": "^6.0.2",
     "ts-node": "^7.0.1",
-    "typescript": "^3.0.1"
+    "typescript": "^3.4.3"
   },
   "dependencies": {
     "yargs": "^13.2.2"
