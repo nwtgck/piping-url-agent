@@ -1,6 +1,6 @@
 import * as http from 'http';
 import * as assert from 'power-assert';
-import getPort from 'get-port';
+import * as getPort from 'get-port';
 import thenRequest from 'then-request';
 import * as express from 'express';
 import * as pipingServer from 'piping-server';
