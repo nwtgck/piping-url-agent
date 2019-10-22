@@ -1,8 +1,9 @@
 import * as http from 'http';
 import * as assert from 'power-assert';
-import getPort from 'get-port';
+import * as getPort from 'get-port';
 import thenRequest from 'then-request';
 import * as express from 'express';
+import * as log4js from 'log4js';
 import * as pipingServer from 'piping-server';
 import * as pipingUrlAgent from '../src/piping-url-agent';
 
@@ -18,7 +19,7 @@ describe('generateHandler', () => {
 
     // Create a Piping Server
     const pServer: http.Server = http.createServer(
-      new pipingServer.Server(false).generateHandler(false)
+      new pipingServer.Server(log4js.getLogger()).generateHandler(false)
     );
     // Wait listening
     await new Promise(resolve =>
