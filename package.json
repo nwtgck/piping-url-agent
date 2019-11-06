@@ -35,7 +35,7 @@
     "get-port": "^5.0.0",
     "log4js": "^5.3.0",
     "mocha": "^6.2.2",
-    "piping-server": "^0.15.0",
+    "piping-server": "^0.15.1",
     "power-assert": "^1.6.1",
     "then-request": "^6.0.2",
     "ts-node": "^8.4.1",
