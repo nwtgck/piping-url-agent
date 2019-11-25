@@ -1,6 +1,6 @@
 {
   "name": "piping-url-agent",
-  "version": "0.1.4-SNAPSHOT",
+  "version": "0.1.4",
   "description": "URL-getting Agent for Piping Server",
   "bin": {
     "piping-url-agent": "src/index.js"
