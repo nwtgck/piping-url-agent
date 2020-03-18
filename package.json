@@ -34,7 +34,7 @@
     "express": "^4.17.1",
     "get-port": "^5.1.1",
     "log4js": "^6.1.2",
-    "mocha": "^7.1.0",
+    "mocha": "^7.1.1",
     "piping-server": "^0.15.8",
     "power-assert": "^1.6.1",
     "then-request": "^6.0.2",
