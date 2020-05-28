@@ -38,7 +38,7 @@
     "piping-server": "^1.0.1",
     "power-assert": "^1.6.1",
     "then-request": "^6.0.2",
-    "ts-node": "^8.10.1",
+    "ts-node": "^8.10.2",
     "typescript": "^3.9.3"
   },
   "dependencies": {
