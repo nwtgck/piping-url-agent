@@ -9,7 +9,7 @@ COPY . /app
 # Install requirements, build and remove devDependencies
 # (from: https://stackoverflow.com/a/25571391/2885946)
 RUN cd /app && \
-    npm install && \
+    npm ci && \
     npm run build && \
     npm prune --production
 
