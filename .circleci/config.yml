@@ -2,7 +2,7 @@ ANCHORS:
   node_steps: &node_steps
     steps:
       - checkout
-      - run: npm install
+      - run: npm ci
       # Check whether "run build" is successful
       - run: npm run build
       - run: npm test
