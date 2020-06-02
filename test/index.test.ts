@@ -19,7 +19,7 @@ describe('generateHandler', () => {
 
     // Create a Piping Server
     const pServer: http.Server = http.createServer(
-      new pipingServer.Server(log4js.getLogger()).generateHandler(false)
+      new pipingServer.Server({ logger: log4js.getLogger() }).generateHandler(false)
     );
     // Wait listening
     await new Promise(resolve =>
