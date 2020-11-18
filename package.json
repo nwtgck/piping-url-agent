@@ -29,7 +29,7 @@
     "@types/mocha": "^8.0.0",
     "@types/node": "^12.12.62",
     "@types/power-assert": "^1.5.3",
-    "@types/yargs": "^15.0.7",
+    "@types/yargs": "^15.0.10",
     "espower-typescript": "^9.0.2",
     "express": "^4.17.1",
     "get-port": "^5.1.1",
