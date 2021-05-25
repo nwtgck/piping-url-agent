@@ -25,7 +25,7 @@
   "author": "Ryo Ota <nwtgck@gmail.com> (https://github.com/nwtgck)",
   "license": "MIT",
   "devDependencies": {
-    "@types/express": "^4.17.6",
+    "@types/express": "^4.17.12",
     "@types/mocha": "^8.0.0",
     "@types/node": "^12.12.62",
     "@types/power-assert": "^1.5.3",
